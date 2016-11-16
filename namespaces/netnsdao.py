@@ -79,7 +79,7 @@ class NetNsIp(Resource):
             ips = []
             ipdb = IPDB(nl=NetNS(nspath))
             for i in ipdb.interfaces.iteritems():
-                interface = (i[0], i[1].ipaddr)
+                interface = (i[0], i[1].ipaddr[0]['address'])
                 ips.append(interface)
             return ips
         else:
