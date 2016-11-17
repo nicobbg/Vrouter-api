@@ -13,21 +13,20 @@ class NetNamespaces(Resource):
     @nsnetns.doc('List network namespaces')
     @nsnetns.response(200, 'Success')
     def get(self):
-        namespaces = netns.listnetns()
-        return namespaces
+        return netns.listnetns()
 
 
 @nsnetns.route('/<string:nspath>')
 @nsnetns.doc(params={'nspath': 'a network namespace name'})
 class NetNamespace(Resource):
+
     @nsnetns.marshal_with(model_netns)
     @nsnetns.doc('Retrieve a network namespace detail')
-    @nsnetns.response(200, 'Success')
+    @nsnetns.response(200, 'Network namespace detail')
     @nsnetns.response(404, 'Namespace does not exist')
     def get(self, nspath):
         if nspath in netns.listnetns():
-            namespace = NetNS(nspath)
-            return namespace
+            return NetNS(nspath)
         else:
             abort(404, "Namespace " + nspath + " does not exist")
 
