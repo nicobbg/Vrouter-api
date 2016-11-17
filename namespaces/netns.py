@@ -1,17 +1,10 @@
-from flask_restplus import Namespace, Resource, fields, abort
-from pyroute2 import IPDB, NetNS, netns
+from flask_restplus import Namespace, Resource, abort
+from pyroute2 import NetNS, netns
+from models.model_netns import NetnsDao, model_netns
+from models.model_interface import model_interface
 
 # Create a namespace
 nsnetns = Namespace('netnamespaces', description='Network namespace')
-
-# Create a model for my resource
-model_netns = nsnetns.model('Netns_model', {
-    'netns': fields.String,
-})
-
-model_ip = nsnetns.model('Interface_model', {
-
-})
 
 
 # Create routes to work with the resource
@@ -68,22 +61,19 @@ class NetNamespace(Resource):
             return("Namespace successfully removed")
 
 
-@nsnetns.route('/<string:nspath>/ips')
+@nsnetns.route('/<string:nspath>/interfaces')
 @nsnetns.doc(params={'nspath': 'a network namespace name'})
 class NetNsIp(Resource):
-    @nsnetns.doc('List namespace ip')
+    @nsnetns.marshal_with(model_interface)
+    @nsnetns.doc('List namespace interfaces')
+    @nsnetns.doc(params={'nspath': 'a network namespace name'})
+    @nsnetns.response(200, 'Returns the list of interface with their ip')
     @nsnetns.response(404, 'Namespace does not exist')
     def get(self, nspath):
         if nspath in netns.listnetns():
-            interface = ()
-            ips = []
-            ipdb = IPDB(nl=NetNS(nspath))
-            for i in ipdb.interfaces.iteritems():
-                interface = (i[0], i[1].ipaddr[0]['address'])
-                ips.append(interface)
-            return ips
+            return NetnsDao(nspath).interfaces
         else:
-            abort(404, "Namespace " + nspath + " does not exist")
+            abort(404, "Namespace does not exist")
 
     def put(self):
         pass

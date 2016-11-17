@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 from flask import Blueprint
 from flask_restplus import Api
-from namespaces.netnsdao import nsnetns as ns1
+from namespaces.netns import nsnetns as ns1
 
 blueprint = Blueprint('api_v1', __name__, url_prefix='/api/v1')
 api = Api(blueprint,
