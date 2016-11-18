@@ -6,6 +6,10 @@ from models.model_interface import model_interface
 # Create a namespace
 nsnetns = Namespace('netnamespaces', description='Network namespace')
 
+# Register models
+nsnetns.models[model_netns.name] = model_netns
+nsnetns.models[model_interface.name] = model_interface
+
 
 # Create routes to work with the resource
 @nsnetns.route('/')
@@ -61,11 +65,9 @@ class NetNamespace(Resource):
 
 
 @nsnetns.route('/<string:nspath>/interfaces')
-@nsnetns.doc(params={'nspath': 'a network namespace name'})
 class NetNsIp(Resource):
     @nsnetns.marshal_with(model_interface)
     @nsnetns.doc('List namespace interfaces')
-    @nsnetns.doc(params={'nspath': 'a network namespace name'})
     @nsnetns.response(200, 'Returns the list of interface with their ip')
     @nsnetns.response(404, 'Namespace does not exist')
     def get(self, nspath):
