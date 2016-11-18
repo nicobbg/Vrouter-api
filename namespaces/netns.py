@@ -26,7 +26,7 @@ class NetNamespace(Resource):
     @nsnetns.response(404, 'Namespace does not exist')
     def get(self, nspath):
         if nspath in netns.listnetns():
-            return NetNS(nspath)
+            return NetnsDao(nspath)
         else:
             abort(404, "Namespace " + nspath + " does not exist")
 
@@ -70,7 +70,7 @@ class NetNsIp(Resource):
     @nsnetns.response(404, 'Namespace does not exist')
     def get(self, nspath):
         if nspath in netns.listnetns():
-            return NetnsDao(nspath).interfaces
+            return NetnsDao(nspath).get_interfaces_dao()
         else:
             abort(404, "Namespace does not exist")
 

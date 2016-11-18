@@ -8,6 +8,17 @@ model_interface = Model('Interface_model', {
 
 
 class InterfaceDao():
+    '''
+    The InterfaceDao class provides the short representation of
+    a network interfaces
+
+    :attr ifname: the name of the interface
+    :attr ip: the interface IPV4
+    :attr status: the operational state of the interface
+    :param ipdb_interface: a network interface
+    :type ipdb_interface: an IPDB interface object
+                                <class 'pyroute2.ipdb.interface.Interface'>
+    '''
     def __init__(self, ipdb_interface):
         try:
             self.ifname = ipdb_interface.ifname
