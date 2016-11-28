@@ -23,7 +23,6 @@ class NetNamespaces(Resource):
 @nsnetns.route('/<string:nspath>')
 @nsnetns.doc(params={'nspath': 'a network namespace name'})
 class NetNamespace(Resource):
-
     @nsnetns.marshal_with(model_netns)
     @nsnetns.doc('Retrieve a network namespace detail')
     @nsnetns.response(200, 'Network namespace detail')
@@ -58,27 +57,27 @@ class NetNamespace(Resource):
         if nspath not in netns.listnetns():
             abort(404, "Namespace not found")
         else:
-            mynet = NetNS(nspath)
-            mynet.remove()
-            mynet.close()
+            with NetNS(nspath) as n:
+                n.remove()
+                n.close()
             return("Namespace successfully removed")
 
 
 @nsnetns.route('/<string:nspath>/interfaces')
 class NetNsIp(Resource):
-    @nsnetns.marshal_with(model_interface)
     @nsnetns.doc('List namespace interfaces')
-    @nsnetns.response(200, 'Returns the list of interface with their ip')
+    @nsnetns.response(200, 'Returns the list of interfaces')
     @nsnetns.response(404, 'Namespace does not exist')
     def get(self, nspath):
         if nspath in netns.listnetns():
-            return NetnsDao(nspath).get_interfaces_dao()
+            return NetnsDao(nspath).interfaces
         else:
             abort(404, "Namespace does not exist")
 
     def put(self):
         pass
 
+    @nsnetns.doc('Create an interface and attach it to this network namespace')
     def post(self):
         pass
 

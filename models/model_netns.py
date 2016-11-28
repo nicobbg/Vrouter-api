@@ -5,7 +5,7 @@ from model_interface import InterfaceDao
 # Create a model for my resource
 model_netns = Model('Netns_model', {
     'name': fields.String,
-    'interfaces_name': fields.List(fields.String)
+    'interfaces': fields.List(fields.String)
 })
 
 
@@ -20,21 +20,31 @@ class NetnsDao():
     '''
     def __init__(self, nspath):
         self.name = nspath
-        self.interfaces_name = []
-        for i in self.get_interfaces_dao():
-            self.interfaces_name.append(i.ifname)
+        self.interfaces = self.get_interfaces()
 
-    def get_interfaces_dao(self):
+    def get_interfaces(self):
         '''
         This method retrieves the list of interfaces for the network namespace.
-        It will returns a list of InterfaceDao object.
 
         :returns: list of interfaces in the namespace
-        :rtype: list of :class:InterfaceDao
+        :rtype: list
         '''
         interfaces = []
         with IPDB(nl=NetNS(self.name)) as ipdb:
-            for i in ipdb.interfaces.iteritems():
-                interface = InterfaceDao(i[1])
-                interfaces.append(interface)
+            for i in ipdb.interfaces:
+                if type(i) is str:
+                    interfaces.append(i)
         return interfaces
+
+    def create_interface(self, iftype, ifname):
+        '''This method create an interface in the network namespace.
+
+        :param iftype: the interface type (bridge, vlan, veth)
+        :type iftype: string
+        :param ifname: the interface name
+        :type ifname: string
+        '''
+        pass
+
+    def set_interface(self):
+        pass
